@@ -1,10 +1,24 @@
-# CPU Scheduler Sim
+<div align="center">
+  <img src="public/banner.webp" width="800" alt="CPU Scheduler Sim Banner" style="border-radius: 12px; margin-bottom: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);" />
+  
+  <h1>CPU Scheduler Sim</h1>
+  <p><em>Un simulador web interactivo para visualizar, entender y practicar gráficamente los principales algoritmos de planificación de CPU.</em></p>
 
-Un simulador web diseñado para visualizar, entender y practicar gráficamente los principales algoritmos de planificación de CPU.
+  <p>
+    <a href="https://cpusim.agustinolthoff.online"><b>Probar Simulador Online 👉</b></a>
+  </p>
 
-[**Probar Simulador Online**](https://cpusim.agustinolthoff.online)
+  <p>
+    <img src="https://img.shields.io/badge/React_18-20232A?style=for-the-badge&logo=react&logoColor=61DAFB" alt="React" />
+    <img src="https://img.shields.io/badge/Vite-B73BFE?style=for-the-badge&logo=vite&logoColor=FFD62E" alt="Vite" />
+    <img src="https://img.shields.io/badge/Vanilla_CSS-1572B6?style=for-the-badge&logo=css3&logoColor=white" alt="CSS" />
+    <img src="https://img.shields.io/badge/Vercel-000000?style=for-the-badge&logo=vercel&logoColor=white" alt="Vercel" />
+  </p>
+</div>
 
-Este proyecto nació con el enfoque de ayudar en la materia Introducción a los Sistemas Operativos (ISO) de la UNLP, permitiendo entender exactamente qué ocurre con el procesador tick por tick cuando se cargan distintos procesos, prioridades, o bloqueos por Entrada/Salida.
+<br>
+
+> Este proyecto nació con el enfoque de ayudar en la materia **Introducción a los Sistemas Operativos (ISO) de la UNLP**, permitiendo entender exactamente qué ocurre con el procesador tick por tick cuando se cargan distintos procesos, prioridades, o bloqueos por Entrada/Salida.
 
 ## Algoritmos soportados
 
