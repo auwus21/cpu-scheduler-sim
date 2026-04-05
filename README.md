@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="public/banner.webp" width="800" alt="CPU Scheduler Sim Banner" style="border-radius: 12px; margin-bottom: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);" />
+  <img src="public/cpu-icon.svg" width="160" alt="CPU Scheduler Sim Logo" style="margin-bottom: 20px;" />
   
   <h1>CPU Scheduler Sim</h1>
   <p><em>Un simulador web interactivo para visualizar, entender y practicar gráficamente los principales algoritmos de planificación de CPU.</em></p>
