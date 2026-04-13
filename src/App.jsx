@@ -25,6 +25,7 @@ export default function App() {
   const [difficulty, setDifficulty] = useState('medium');
   const [practicePhase, setPracticePhase] = useState('idle');
   const [ioEnabled, setIoEnabled] = useState(false);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
 
   const algoDef = ALGORITHMS.find(a => a.id === algorithm);
 
@@ -147,9 +148,17 @@ export default function App() {
       )}
 
       {/* Main layout */}
-      <main className="app-main">
-        <aside className="left-panel">
-          <ControlPanel
+      <main className={`app-main ${sidebarCollapsed ? 'sidebar-collapsed' : ''}`}>
+        <aside className={`left-panel ${sidebarCollapsed ? 'collapsed' : ''}`}>
+          <button
+            className="sidebar-toggle"
+            onClick={() => setSidebarCollapsed(c => !c)}
+            title={sidebarCollapsed ? 'Expandir panel' : 'Colapsar panel'}
+          >
+            {sidebarCollapsed ? '▶' : '◀'}
+          </button>
+          {!sidebarCollapsed && (
+            <ControlPanel
             processes={processes}
             setProcesses={setProcesses}
             algorithm={algorithm}
@@ -166,6 +175,7 @@ export default function App() {
             ioEnabled={ioEnabled}
             setIoEnabled={setIoEnabled}
           />
+          )}
         </aside>
 
         <section className="right-panel">

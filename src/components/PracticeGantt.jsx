@@ -33,6 +33,9 @@ export default function PracticeGantt({
   pushUndo,
   hasIO,
   usedResources,
+  userReadyQueue,
+  setUserReadyQueue,
+  isExporting,
 }) {
   const isDragging = useRef(false);
   const dragPid = useRef(null);
@@ -61,37 +64,7 @@ export default function PracticeGantt({
     return max;
   }, [filledCells, filledIOCells, processes]);
 
-  const derivedReadyQueue = useMemo(() => {
-    const rq = {};
-    for (let t = 0; t < totalTime; t++) {
-      // Only show queue up to where student has painted
-      if (t > lastPaintedTick) { rq[t] = null; continue; }
 
-      const inQueue = [];
-      processes.forEach(p => {
-        if (p.arrival > t) return;
-        if (filledCells[p.pid]?.has(t)) return;
-        if (filledIOCells?.[p.pid]?.[t]) return;
-
-        const cpuTicks = filledCells[p.pid] ? [...filledCells[p.pid]].sort((a, b) => a - b) : [];
-        if (cpuTicks.length >= p.burst) {
-          const lastTick = cpuTicks[cpuTicks.length - 1];
-          if (lastTick < t) return;
-        }
-
-        const ioTicks = filledIOCells?.[p.pid] ? Object.keys(filledIOCells[p.pid]).map(Number) : [];
-        const allTicks = [...cpuTicks, ...ioTicks].sort((a, b) => a - b);
-        if (cpuTicks.length >= p.burst && allTicks.length > 0) {
-          const lastAny = Math.max(...allTicks);
-          if (lastAny < t) return;
-        }
-
-        inQueue.push(p.pid.replace(/^P/i, ''));
-      });
-      rq[t] = inQueue.join(',');
-    }
-    return rq;
-  }, [filledCells, filledIOCells, processes, totalTime, lastPaintedTick]);
 
   // Colas de recursos automaticas en base a I/O
   const derivedResourceQueues = useMemo(() => {
@@ -265,7 +238,7 @@ export default function PracticeGantt({
       <div className="gantt-header">
         <h2 className="section-title">
           <span className="section-icon">📝</span>
-          Diagrama de Gantt — Completalo vos
+          {isExporting ? 'Diagrama de Gantt' : 'Diagrama de Gantt — Completalo vos'}
         </h2>
 
         {/* Paint mode toggle */}
@@ -516,26 +489,23 @@ export default function PracticeGantt({
               );
             })}
 
-            {/* Ready Queue (solo lectura) */}
+            {/* Ready Queue (editable por el usuario) */}
             <tr className="gt-rqueue-row">
               <td className="gt-cell-pid gt-algo-label">{algoShort}</td>
               <td colSpan={hasIO ? 3 : 2} className="gt-rqueue-title">R Queue</td>
               {times.map(t => {
-                const val = derivedReadyQueue[t];
-                const correctVal = corrected && correctRQ ? (correctRQ[t] || []).map(pid => pid.replace(/^P/i, '')).join(',') : null;
-                const isMatch = correctVal !== null ? (val || '') === correctVal : null;
+                const val = userReadyQueue?.[t] || '';
                 return (
-                  <td key={t} className="gt-cell gt-cell-rqueue gt-cell-rqueue-auto">
-                    {val === null ? (
-                      <span className="rq-auto-empty"></span>
-                    ) : corrected && correctVal !== null ? (
-                      <span className={isMatch ? 'rq-correct' : 'rq-wrong'} title={isMatch ? '✅' : `❌ Correcto: ${correctVal}`}>
-                        {val || '—'}
-                        {!isMatch && <div className="rq-correction">{correctVal || '—'}</div>}
-                      </span>
-                    ) : (
-                      <span className="rq-auto-value">{val || '—'}</span>
-                    )}
+                  <td key={t} className="gt-cell gt-cell-rqueue" title={val || ''}>
+                    <input
+                      type="text"
+                      className="pm-input-inline"
+                      value={val}
+                      onChange={e => setUserReadyQueue(prev => ({ ...prev, [t]: e.target.value }))}
+                      disabled={corrected}
+                      title={val || ''}
+                      placeholder="·"
+                    />
                   </td>
                 );
               })}

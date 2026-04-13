@@ -26,6 +26,10 @@ export default function PracticeMode({
   const [exportMsg, setExportMsg] = useState('');
   const [newAchievement, setNewAchievement] = useState(null);
 
+  // States for user queues and export
+  const [userReadyQueue, setUserReadyQueue] = useState({});
+  const [isExporting, setIsExporting] = useState(false);
+
   // Pilas de Deshacer/Rehacer
   const [undoStack, setUndoStack] = useState([]);
   const [redoStack, setRedoStack] = useState([]);
@@ -87,6 +91,7 @@ export default function PracticeMode({
     setFilledCells({});
     setFilledIOCells({});
     setUserMetrics({});
+    setUserReadyQueue({});
     setCorrection(null);
     setShowSolution(false);
     setUndoStack([]);
@@ -127,6 +132,7 @@ export default function PracticeMode({
     setFilledCells({});
     setFilledIOCells({});
     setUserMetrics({});
+    setUserReadyQueue({});
     setCorrection(null);
     setShowSolution(false);
     setUndoStack([]);
@@ -151,26 +157,32 @@ export default function PracticeMode({
   };
 
   // Exportación a imagen
-  const handleExport = async () => {
+  const handleExport = () => {
     const el = document.getElementById('practice-gantt-export');
     if (!el) return;
     setExportMsg('Generando imagen...');
-    try {
-      const canvas = await html2canvas(el, {
-        backgroundColor: '#0f1729',
-        scale: 2,
-        useCORS: true,
-      });
-      const link = document.createElement('a');
-      link.download = `CPUSim_${algoDef?.label || algorithm}_${new Date().toISOString().slice(0,10)}.png`;
-      link.href = canvas.toDataURL('image/png');
-      link.click();
-      setExportMsg('✅ Imagen descargada');
-      setTimeout(() => setExportMsg(''), 2000);
-    } catch (err) {
-      setExportMsg('❌ Error al exportar');
-      setTimeout(() => setExportMsg(''), 3000);
-    }
+    setIsExporting(true);
+
+    setTimeout(async () => {
+      try {
+        const canvas = await html2canvas(el, {
+          backgroundColor: '#0f1729',
+          scale: 2,
+          useCORS: true,
+        });
+        const link = document.createElement('a');
+        link.download = `CPUSim_${algoDef?.label || algorithm}_${new Date().toISOString().slice(0,10)}.png`;
+        link.href = canvas.toDataURL('image/png');
+        link.click();
+        setExportMsg('✅ Imagen descargada');
+        setTimeout(() => setExportMsg(''), 2000);
+      } catch (err) {
+        setExportMsg('❌ Error al exportar');
+        setTimeout(() => setExportMsg(''), 3000);
+      } finally {
+        setIsExporting(false);
+      }
+    }, 100);
   };
 
   // Compartir ejercicio
@@ -298,7 +310,7 @@ export default function PracticeMode({
                 <strong>Click + arrastrar</strong> para pintar celdas CPU.
                 {hasIO && <> Usá el <strong>toggle 💾 I/O</strong> para pintar celdas de I/O.</>}
                 {' '}<strong>Ctrl+Z</strong> para deshacer.
-                La <strong>R Queue</strong> se calcula sola. Solo completá <strong>TR/TE</strong>.
+                Solo completá <strong>R Queue</strong> (opcional) y <strong>TR/TE</strong>.
               </span>
             </div>
           )}
@@ -309,7 +321,7 @@ export default function PracticeMode({
             filledCells={filledCells} setFilledCells={setFilledCells}
             filledIOCells={filledIOCells} setFilledIOCells={setFilledIOCells}
             userMetrics={userMetrics} setUserMetrics={setUserMetrics}
-            cellResults={correction?.cellResults} corrected={phase === 'corrected'}
+            cellResults={correction?.cellResults} corrected={phase === 'corrected' && !isExporting}
             correctCells={correction?.correctCells}
             ioCellResults={correction?.ioCellResults}
             correctIOCells={correction?.correctIOCells}
@@ -319,6 +331,9 @@ export default function PracticeMode({
             undoStack={undoStack} pushUndo={pushUndo}
             hasIO={hasIO}
             usedResources={correctResult?.usedResources || []}
+            userReadyQueue={userReadyQueue}
+            setUserReadyQueue={setUserReadyQueue}
+            isExporting={isExporting}
           />
 
           {/* Acciones principales */}

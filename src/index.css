@@ -211,6 +211,11 @@ html, body, #root {
   gap: 0;
   flex: 1;
   min-height: 0;
+  transition: grid-template-columns 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.app-main.sidebar-collapsed {
+  grid-template-columns: 48px 1fr;
 }
 
 /* ─── Left panel ─── */
@@ -218,9 +223,52 @@ html, body, #root {
   border-right: 1px solid var(--border);
   background: var(--bg-panel);
   overflow-y: auto;
+  overflow-x: hidden;
   padding: 20px;
   display: flex;
   flex-direction: column;
+  transition: padding 0.3s ease, width 0.3s ease;
+  position: relative;
+}
+
+.left-panel.collapsed {
+  padding: 12px 6px;
+  align-items: center;
+  overflow: hidden;
+}
+
+/* Botón para colapsar/expandir el sidebar */
+.sidebar-toggle {
+  position: absolute;
+  top: 12px;
+  right: 8px;
+  z-index: 10;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+  background: var(--bg-surface);
+  color: var(--txt-secondary);
+  font-size: 12px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  padding: 0;
+  line-height: 1;
+}
+
+.sidebar-toggle:hover {
+  background: rgba(108,99,255,0.15);
+  border-color: var(--clr-purple);
+  color: var(--clr-purple);
+  transform: scale(1.1);
+}
+
+.left-panel.collapsed .sidebar-toggle {
+  position: static;
+  margin: 4px auto;
 }
 
 .left-panel::-webkit-scrollbar { width: 4px; }
@@ -1218,6 +1266,38 @@ html, body, #root {
   text-align: center;
   vertical-align: middle;
   height: 32px;
+  padding: 2px !important;
+  position: relative;
+}
+
+/* Input editable dentro de la R Queue */
+.gt-cell-rqueue .pm-input-inline {
+  width: 100% !important;
+  min-width: 0 !important;
+  padding: 2px 1px !important;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px !important;
+  text-align: center;
+  background: transparent;
+  color: #ffb86c;
+  border: none;
+  outline: none;
+  letter-spacing: 0.5px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.gt-cell-rqueue .pm-input-inline:focus {
+  background: rgba(255,184,108,0.08);
+  border-radius: 3px;
+  overflow: visible;
+  position: relative;
+  z-index: 5;
+}
+
+.gt-cell-rqueue .pm-input-inline:disabled {
+  opacity: 0.6;
+  cursor: default;
 }
 
 .gt-avg-cell {
